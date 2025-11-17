@@ -40,6 +40,23 @@ class User extends Authenticatable{
         return $this->hasOne(Employee::class);
     }
 
+    // هنا التعديل 
+    public function departmentManagers()
+{
+    return $this->hasMany(DepartmentManager::class);
+}
+
+public function managedDepartments()
+{
+    return $this->hasManyThrough(
+        Department::class,
+        DepartmentManager::class,
+        'user_id',
+        'id',
+        'id',
+        'department_id'
+    )->where('department_managers.is_active', true);
+}
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -57,22 +74,7 @@ class User extends Authenticatable{
      */
     // HERE I EDIT 
     
-public function departmentManagers()
-{
-    return $this->hasMany(DepartmentManager::class);
-}
 
-public function managedDepartments()
-{
-    return $this->hasManyThrough(
-        Department::class,
-        DepartmentManager::class,
-        'user_id',
-        'id',
-        'id',
-        'department_id'
-    )->where('department_managers.is_active', true);
-}
     protected function casts(): array{
         return [
             'email_verified_at' => 'datetime',
