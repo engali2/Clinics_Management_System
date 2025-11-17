@@ -115,6 +115,16 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(fu
     Route::get('/edit/department-manager/{id}' ,[AdminDepartmentController::class , 'editDepartmentManager'])->name('edit_department_manager');
     Route::put('/update/department-manager/{id}' ,[AdminDepartmentController::class , 'updateDepartmentManager'])->name('update_department_manager');
     Route::delete('/delete/department-manager/{id}' ,[AdminDepartmentController::class , 'deleteDepartmentManager'])->name('delete_department_manager');
+    // =====> هذا هو التعديل - إضافة Routes مدراء الأقسام <=====
+    // Department Managers Routes - New System
+    Route::get('/add/department-manager', [AdminDepartmentController::class, 'addDepartmentManager'])->name('add_department_manager');
+    Route::post('/store/department-manager', [AdminDepartmentController::class, 'storeDepartmentManager'])->name('store_department_manager');
+    Route::get('/view/department-managers', [AdminDepartmentController::class, 'viewDepartmentManagers'])->name('view_department_managers');
+    Route::get('/edit/department-manager/{id}', [AdminDepartmentController::class, 'editDepartmentManager'])->name('edit_department_manager');
+    Route::put('/update/department-manager/{id}', [AdminDepartmentController::class, 'updateDepartmentManager'])->name('update_department_manager');
+    Route::delete('/delete/department-manager/{id}', [AdminDepartmentController::class, 'deleteDepartmentManager'])->name('delete_department_manager');
+    Route::patch('/deactivate/department-manager/{id}', [AdminDepartmentController::class, 'deactivateDepartmentManager'])->name('deactivate_department_manager');
+    // =====> نهاية التعديل <=====
 
 
 
