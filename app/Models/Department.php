@@ -30,6 +30,20 @@ class Department extends Model{
             'id'                       // المفتاح الأساسي في employees
         );
     }
+    public function doctors(){
+    return $this->hasMany(Doctor::class);
+}
+
+// ====> هنا 
+public function departmentManagers()
+{
+    return $this->hasMany(DepartmentManager::class);
+}
+
+public function activeManager()
+{
+    return $this->hasOne(DepartmentManager::class)->where('is_active', true);
+}
 
     public function patients(){
         return $this->belongsToMany(Patient::class, 'department_patients');
