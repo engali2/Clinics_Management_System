@@ -259,5 +259,100 @@ class DepartmentController extends Controller{
             return response()->json(['success' => true]);
         }
     }
+    public function addDepartmentManager()
+{
+    $departments = Department::all();
+    $employees = Employee::with('user')->get();
+    
+    return view('Backend.admin.departments.managers.add', compact('departments', 'employees'));
+}
+
+public function storeDepartmentManager(Request $request)
+{
+    $existingManager = DepartmentManager::where('department_id', $request->department_id)
+        ->where('is_active', true)
+        ->exists();
+
+    if ($existingManager) {
+        return response()->json(['data' => 0]);
+    }
+
+    $employee = Employee::where('user_id', $request->user_id)->first();
+    if (!$employee) {
+        return response()->json(['data' => 0]);
+    }
+
+    DepartmentManager::create([
+        'user_id' => $request->user_id,
+        'department_id' => $request->department_id,
+        'start_date' => $request->start_date,
+        'is_active' => true,
+    ]);
+
+    return response()->json(['data' => 1]);
+}
+
+public function viewDepartmentManagers()
+{
+    $managers = DepartmentManager::with(['user', 'department'])
+        ->orderBy('id', 'asc')
+        ->paginate(10);
+        
+    return view('Backend.admin.departments.managers.view', compact('managers'));
+}
+
+public function editDepartmentManager($id)
+{
+    $manager = DepartmentManager::with(['user', 'department'])->findOrFail($id);
+    $departments = Department::all();
+    $employees = Employee::with('user')->get();
+    
+    return view('Backend.admin.departments.managers.edit', compact('manager', 'departments', 'employees'));
+}
+
+public function updateDepartmentManager(Request $request, $id)
+{
+    $manager = DepartmentManager::findOrFail($id);
+
+    if ($manager->department_id != $request->department_id) {
+        $existingManager = DepartmentManager::where('department_id', $request->department_id)
+            ->where('is_active', true)
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($existingManager) {
+            return response()->json(['data' => 0]);
+        }
+    }
+
+    $manager->update([
+        'user_id' => $request->user_id,
+        'department_id' => $request->department_id,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
+        'is_active' => $request->is_active,
+    ]);
+
+    return response()->json(['data' => 1]);
+}
+
+public function deleteDepartmentManager($id)
+{
+    $manager = DepartmentManager::findOrFail($id);
+    $manager->delete();
+
+    return response()->json(['success' => true]);
+}
+
+public function deactivateDepartmentManager($id)
+{
+    $manager = DepartmentManager::findOrFail($id);
+    $manager->update([
+        'is_active' => false,
+        'end_date' => now(),
+    ]);
+
+    return response()->json(['data' => 1]);
+}
 }
 
